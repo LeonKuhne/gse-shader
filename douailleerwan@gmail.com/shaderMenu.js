@@ -55,7 +55,7 @@ export const ShaderMenu = GObject.registerClass(
       this.menu.addMenuItem(item);
     }
 
-    _addShaderList(config, output) {
+    _addShaderList() {
       let  item = new PopupMenu.PopupMenuItem(_("Shader menu"));
       item.label.add_style_class_name('display-subtitle');
       item.reactive = false;
@@ -67,38 +67,34 @@ export const ShaderMenu = GObject.registerClass(
         let shader  =  shaderList[i];
         let item = new PopupMenu.PopupMenuItem(shader.name);
 
-        this._callbacks.push(() => {
-          this._shaderModifier._changeShader(shader);
-          this._removeSlider()
-          if (this._shaderModifier.hasSlider()) this._addSlider();
-          this._sliderChanged(this._slider, 0.5);
-          this._slider.value = 0.5;
+        item.connect('activate', () => {
+          this._shaderModifier.changeShader(shader);
+          if (!this._shaderModifier.hasSlider()) this._removeSlider();
+          else if (!this.sliderMenu) this._addSlider();
         });
-        item.connect('activate', this._callbacks[i]);
         this.menu.addMenuItem(item);
       }
     }
 
     _addSlider() {
-      this._item = new PopupMenu.PopupBaseMenuItem({ activate: false });
-      this.menu.addMenuItem(this._item);
+      this.sliderMenu = new PopupMenu.PopupBaseMenuItem({ activate: false });
+      this.menu.addMenuItem(this.sliderMenu);
 
-      this._slider = new Slider.Slider(.5);
-      this._slider.connect('notify::value', () => this._sliderChanged());
-      this._slider.can_focus = false;
-      this._slider.value = 0.5;
-      this._sliderChanged(this._slider, this._slider._value);
+      const slider = new Slider.Slider(.5);
+      slider.connect('notify::value', () => this._updateSlider(slider.value));
+      slider.can_focus = false;
+      this._updateSlider(slider.value);
 
       let icon = new St.Icon({ icon_name: 'view-refresh',
                               style_class: 'popup-menu-icon' });
-      this._item.add_child(icon);
-      this._item.add_child(this._slider);
+      this.sliderMenu.add_child(icon);
+      this.sliderMenu.add_child(slider);
     }
 
     _removeSlider() {
-      if (this._item) {
-        this._item.destroy();
-        delete this._item;
+      if (this.sliderMenu) {
+        this.sliderMenu.destroy();
+        delete this.sliderMenu;
       }
     }
 
@@ -106,9 +102,9 @@ export const ShaderMenu = GObject.registerClass(
       return num < min ? min : num > max ? max : num;
     }
 
-    _sliderChanged() {
+    _updateSlider(value) {
       //clamp fixing issue with cogl
-      this._shaderModifier.updateSliderValue(this._clamp(this._slider.value, 0.001, 0.999));
+      this._shaderModifier.updateSliderValue(this._clamp(value, 0.001, 0.999));
     }
   }
 );

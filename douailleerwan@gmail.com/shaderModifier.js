@@ -39,7 +39,7 @@ export class ShaderModifier {
     // till the menu is used.
   }
 
-  _changeShader(shaderItem) {
+  changeShader(shaderItem) {
     this._removeShader();
     this._currentShader = shaderItem;
     this._applyCurrentShader();
@@ -48,7 +48,7 @@ export class ShaderModifier {
   _applyCurrentShader() {
       this._properties={};
       try {
-        this._shaderSource = Shell.get_file_contents_utf8_sync(this._path + "/" + this._currentShader.fileName);
+        this._shaderSource = Shell.get_file_contents_utf8_sync(this._path + "/shaders/" + this._currentShader.fileName);
       } catch (e) {
         this._shaderSource = null;
         return;

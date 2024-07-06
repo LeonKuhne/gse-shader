@@ -21,14 +21,14 @@ import Gio from 'gi://Gio';
 export class ShaderList {
   constructor(path) {
     this._shaderList = new Array();
-    this._dir = Gio.File.new_for_path(path);
+    this._shader_dir = Gio.File.new_for_path(path + "/shaders");
     this._fillShaderList();
   }
 
   _fillShaderList() {
     let fileEnum;
     try {
-      fileEnum = this._dir.enumerate_children('', Gio.FileQueryInfoFlags.NONE, null);
+      fileEnum = this._shader_dir.enumerate_children('', Gio.FileQueryInfoFlags.NONE, null);
     } catch (e) {
       fileEnum = null;
     }

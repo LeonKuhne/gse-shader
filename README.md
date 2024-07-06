@@ -15,3 +15,13 @@ Restart gnome-shell : "alt+f2" then type "r" and validate.
 You need to install and use `gnome-tweaks` to turn on the extension. Once it's turned on, you can choose the shader you want to apply and use the slider to change some values.
 If you want to add or modify any shader, place it in the extension directory with the ".frag" file extension. Gnome-shell need to be restarted to make it available in the extension menu.
 
+
+# Development
+#### View logs
+`journalctl -f -o cat /usr/bin/gnome-shell`
+
+#### Link extension 
+`ln -sf "$(pwd)/douailleerwan@gmail.com" ~/.local/share/gnome-shell/extensions`
+
+#### Apply changes
+reload with `alt+f2` then type `r`
